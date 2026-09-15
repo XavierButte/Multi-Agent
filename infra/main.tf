@@ -1,21 +1,14 @@
-terraform {
-  required_providers {
-    incus = {
-      source  = "lxc/incus"
-      version = "~> 1.2"
-    }
-  }
-}
-
 provider "incus" {}
 
 resource "incus_instance" "agent" {
-  name  = "agent-01"
-  image = "images:debian/13"
+  count = var.vm_count
+
+  name  = format("agent-%02d", count.index + 1) # agent-XX
+  image = var.vm_image
   type  = "virtual-machine"
 
   config = {
-    "limits.cpu"    = 1    # to define
-    "limits.memory" = "2GiB"   # to define
+    "limits.cpu"    = tostring(var.vm_cpu)
+    "limits.memory" = var.vm_memory
   }
 }
